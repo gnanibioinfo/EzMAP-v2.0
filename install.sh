@@ -323,34 +323,92 @@ else
     info "R is not installed."
 
     if ask_yes "Install R + Shiny packages for downstream analysis?"; then
-        # Detect if we should install via conda or system package manager
+        # ----------------------------------------------------------------
+        # Two-stage install: get R itself first (small, reliable), then
+        # let scripts/install_r_packages.R handle CRAN + Bioconductor
+        # via R's own package manager. The previous one-shot conda
+        # install bundled 20+ packages including Bioconductor packages
+        # without `-c bioconda` channel, which made conda's solver fail
+        # with "Solving environment: ...working... failed" and left
+        # bash in a corrupted state ("pop_var_context" error).
+        # ----------------------------------------------------------------
+        R_INSTALLER="$SCRIPT_DIR/scripts/install_r_packages.R"
+
+        # Stage 1: install r-base (and optionally activate conda env)
+        R_INSTALLED_OK=false
         if [ "$CONDA_FOUND" = true ] && conda env list 2>/dev/null | grep -q "^${QIIME2_ENV_NAME} "; then
-            info "Installing R into the $QIIME2_ENV_NAME conda environment..."
-            conda install -n "$QIIME2_ENV_NAME" -c conda-forge \
-                r-base r-shiny r-bslib r-shinyjs r-dt r-plotly r-ggplot2 r-ggrepel \
-                r-vegan r-ape r-dplyr r-tidyr r-reshape2 r-pheatmap r-rcolorbrewer \
-                r-viridis r-scales r-randomforest r-igraph \
-                bioconductor-phyloseq bioconductor-deseq2 bioconductor-biomformat \
-                -y -q
-            ok "R + packages installed in conda environment '${QIIME2_ENV_NAME}'."
-        elif command -v apt &>/dev/null; then
-            info "Installing R via apt..."
-            sudo apt update -qq && sudo apt install -y r-base r-base-dev
-            info "Installing R packages..."
-            R_INSTALLER="$SCRIPT_DIR/scripts/install_r_packages.R"
-            if [ -f "$R_INSTALLER" ]; then
-                Rscript "$R_INSTALLER"
+            info "Installing r-base into the '${QIIME2_ENV_NAME}' conda environment..."
+            info "(only r-base + a few small system libraries via conda;"
+            info " all 30+ EzMAP R packages installed by Rscript afterwards)"
+            if conda install -n "$QIIME2_ENV_NAME" -c conda-forge \
+                    r-base r-essentials \
+                    -y 2>&1 | tee -a /tmp/ezmap_conda_r.log; then
+                ok "r-base installed in conda env '${QIIME2_ENV_NAME}'."
+                R_INSTALLED_OK=true
+                # Activate so Rscript on PATH points to conda's R
+                CONDA_BASE=$(conda info --base 2>/dev/null)
+                if [ -n "$CONDA_BASE" ] && [ -f "$CONDA_BASE/etc/profile.d/conda.sh" ]; then
+                    # shellcheck disable=SC1091
+                    source "$CONDA_BASE/etc/profile.d/conda.sh"
+                    conda activate "$QIIME2_ENV_NAME" || true
+                fi
+            else
+                warn "Conda r-base install failed. Falling back to system R..."
             fi
-            ok "R installed via apt."
+        fi
+
+        # Stage 1 fallback: system R via apt or Homebrew
+        if [ "$R_INSTALLED_OK" = false ]; then
+            if command -v apt &>/dev/null; then
+                info "Installing R via apt (system package manager)..."
+                if sudo apt update -qq && sudo apt install -y r-base r-base-dev \
+                        libcurl4-openssl-dev libssl-dev libxml2-dev \
+                        libfontconfig1-dev libharfbuzz-dev libfribidi-dev \
+                        libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev; then
+                    ok "R + system libraries installed via apt."
+                    R_INSTALLED_OK=true
+                else
+                    warn "apt install of R failed. Sudo password issue or no network?"
+                fi
+            elif command -v brew &>/dev/null; then
+                info "Installing R via Homebrew..."
+                if brew install r openssl libxml2 harfbuzz fribidi; then
+                    ok "R installed via Homebrew."
+                    R_INSTALLED_OK=true
+                fi
+            fi
+        fi
+
+        # Stage 2: DEFERRED.
+        # We deliberately skip installing the 30+ EzMAP R packages here.
+        # Reason: most users want to run the UPSTREAM Java pipeline first
+        # (FASTQ -> BIOM via QIIME 2) which needs zero R packages. Forcing
+        # them to wait 15-60 minutes for Bioconductor compilation BEFORE
+        # they can even try upstream is a frustrating first impression.
+        # Instead, the Shiny app (downstream) auto-detects missing
+        # packages on first launch and installs them then -- see the
+        # .ezmap_auto_install() block at the top of EzMAPv2-downstream/
+        # global.r. That gives the user a fast install now + clear
+        # progress feedback later when they actually need R.
+        if [ "$R_INSTALLED_OK" = true ]; then
+            info "R installed. EzMAP R packages (phyloseq, DESeq2, etc.) will be"
+            info "installed automatically when you first launch the downstream"
+            info "Shiny app -- this defers the long ~15-60 minute compile until"
+            info "you actually need it."
+            info ""
+            info "If you want to install everything now anyway, run:"
+            info "  Rscript $R_INSTALLER"
         else
             warn "Cannot auto-install R on this system."
             warn "Please install R manually:"
-            warn "  Ubuntu:  sudo apt install r-base"
+            warn "  Ubuntu:  sudo apt install r-base r-base-dev"
             warn "  macOS:   brew install r"
-            warn "  Conda:   conda install -c conda-forge r-base r-shiny"
+            warn "  Conda:   conda install -n ${QIIME2_ENV_NAME} -c conda-forge r-base"
+            warn "Then re-run: ./install.sh"
         fi
     else
         warn "R installation skipped. Downstream analysis will not be available."
+        warn "To install R packages later: Rscript scripts/install_r_packages.R"
     fi
 fi
 echo ""
