@@ -46,21 +46,30 @@ public abstract class BasePage extends JPanel {
         body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
         body.setAlignmentX(LEFT_ALIGNMENT);
 
+        // Both scrollbars AS_NEEDED so on small laptop screens (1366x768
+        // and below) the wizard panels remain fully usable -- previously
+        // HORIZONTAL_SCROLLBAR_NEVER clipped content and hid the file
+        // browse / Continue buttons off-screen.
         JScrollPane scroll = new JScrollPane(body,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scroll.setBorder(BorderFactory.createEmptyBorder());
         scroll.setOpaque(false);
         scroll.getViewport().setOpaque(false);
         scroll.getVerticalScrollBar().setUnitIncrement(14);
+        scroll.getHorizontalScrollBar().setUnitIncrement(14);
         add(scroll, BorderLayout.CENTER);
     }
 
     /** Append a component to the page body column. */
     protected <T extends JComponent> T add(T c) {
         c.setAlignmentX(LEFT_ALIGNMENT);
-        // Let width stretch but allow height to grow with content
-        c.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+        // Cap maximum width at a reasonable reading-line length (~960px).
+        // Previously Short.MAX_VALUE made child components stretch
+        // infinitely wide, which interacted badly with narrow viewports
+        // on laptops -- file browse buttons drifted off the visible area
+        // even with horizontal scroll enabled. Cap height as before.
+        c.setMaximumSize(new Dimension(960, Short.MAX_VALUE));
         body.add(c);
         body.add(Box.createVerticalStrut(14));
         return c;
