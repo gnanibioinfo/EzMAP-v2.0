@@ -34,7 +34,12 @@ public class MainFrame extends JFrame {
     public MainFrame() {
         super("EzMAP v2 — Easy Microbiome Pipeline");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setMinimumSize(new Dimension(960, 680));
+        // Sized for typical laptop screens.
+        // 1366x768 (still ~70% of installed laptops) needs minimum 880x640
+        // after taskbar/dock + window chrome; preferred fills nicely on
+        // 1440x900 and above. Body content is now horizontally scrollable
+        // (see BasePage), so even narrower viewports remain usable.
+        setMinimumSize(new Dimension(880, 640));
         setPreferredSize(new Dimension(1100, 760));
 
         cards.setBackground(Theme.BACKGROUND);
