@@ -91,7 +91,7 @@ The installation has two phases:
 After downloading and extracting the EzMAP2 package:
 
 **Step 1 — Install prerequisites (all platforms):**
-- Install the Java runtime included in the `java/` folder of the source package, or download it from [Adoptium (Java 11+)](https://adoptium.net/).
+- Install the Java Runtime Environment (JRE). You can download Java 11 or later from Adoptium. [Adoptium (Java 11+)](https://adoptium.net/).
 - Install [R 4.2+](https://cran.r-project.org/) (see also [R Shiny](https://shiny.posit.co/)).
 
 **Step 2 — Launch the GUI:**
@@ -126,18 +126,13 @@ The repository download already includes pre-built classifiers and reference dat
 
 | File | Region | Use case |
 |---|---|---|
-| [`silva-16S-V3V4-nb-classifier.qza`](https://github.com/gnanibioinfo/EzMAP-v2.0/blob/main/classifier/silva-16S-V3V4-nb-classifier.qza) | 16S V3–V4 | Bacterial / archaeal communities (SILVA 138) |
-| [`unite-ITS1-nb-classifier.qza`](https://github.com/gnanibioinfo/EzMAP-v2.0/blob/main/classifier/unite-ITS1-nb-classifier.qza) | ITS1 | Fungal communities (UNITE v7) |
+| [`silva-16S-V3V4-nb-classifier.qza`] | 16S V3–V4 | Bacterial / archaeal communities (SILVA 138) |
+| [`unite-ITS1-nb-classifier.qza`] | ITS1 | Fungal communities (UNITE v7) |
 
 **`db/` — reference sequence and taxonomy files (only needed if training a custom classifier for a non-default amplicon region):**
 
-| File | Source |
-|---|---|
-| [`gg2-2024.09-nb-seqs.qza`](https://github.com/gnanibioinfo/EzMAP-v2.0/blob/main/db/gg2-2024.09-nb-seqs.qza) | Greengenes2 2024.09 reference sequences |
-| [`unite-ver7-99-seqs-01.12.2017.qza`](https://github.com/gnanibioinfo/EzMAP-v2.0/blob/main/db/unite-ver7-99-seqs-01.12.2017.qza) | UNITE v7 fungal reference sequences (99% clustering) |
-| [`unite-ver7-99-tax-01.12.2017.qza`](https://github.com/gnanibioinfo/EzMAP-v2.0/blob/main/db/unite-ver7-99-tax-01.12.2017.qza) | UNITE v7 fungal taxonomy (99% clustering) |
 
-**Full SILVA / Greengenes / UNITE reference databases** (multi-GB; needed only if training classifiers for non-default amplicon regions like V1–V2, V4–V5, ITS2, etc.) are not bundled in the main repository to keep the download size manageable. They can be downloaded from the [v2.0.0 release page](https://github.com/gnanibioinfo/EzMAP-v2.0/releases/tag/v2.0.0).
+**Full SILVA /  UNITE reference databases** (multi-GB; needed only if training classifiers for non-default amplicon regions like V1–V2, V4–V5, ITS2, etc.) are not bundled in the main repository to keep the download size manageable. They can be downloaded from the [v2.0.0 release page](https://github.com/gnanibioinfo/EzMAP-v2.0/releases/tag/v2.0.0).
 
 ### Prerequisites — Detailed Instructions
 
