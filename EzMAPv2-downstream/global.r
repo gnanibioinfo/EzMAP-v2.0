@@ -4,6 +4,130 @@
 ################################################################################
 
 # ============================================================================
+# Auto-install missing core packages on first launch.
+# ----------------------------------------------------------------------------
+# If a user installed R but didn't run scripts/install_r_packages.R, the
+# library() calls below fail with "there is no package called 'shinyjs'"
+# and the Shiny app dies before showing anything. Catch that case here:
+# detect missing packages, offer to install them automatically using PPM
+# binaries (Linux) or CRAN (macOS/Windows). Only runs if at least one
+# core package is missing -- normal launches incur zero cost.
+# ============================================================================
+.ezmap_core_packages <- c(
+    "shiny", "shinyjs", "ggplot2", "phyloseq", "biomformat",
+    "plyr", "RColorBrewer", "dplyr", "vegan", "stringr",
+    "shinycssloaders", "bslib"
+)
+.ezmap_extra_packages <- c(
+    "shinyWidgets", "DT", "ggrepel", "ape", "tidyr", "reshape2",
+    "pheatmap", "viridis", "scales", "randomForest", "igraph",
+    "sortable", "RColorBrewer", "car", "FSA", "rstatix"
+)
+.ezmap_bioc_packages <- c("phyloseq", "DESeq2", "biomformat", "ANCOMBC",
+                          "microbiome")
+
+.ezmap_missing <- function(pkgs) {
+    pkgs[!vapply(pkgs, requireNamespace, logical(1), quietly = TRUE)]
+}
+
+.ezmap_setup_repos <- function() {
+    if (.Platform$OS.type == "unix" && Sys.info()["sysname"] == "Linux") {
+        codename <- tryCatch({
+            info <- readLines("/etc/os-release", warn = FALSE)
+            cn <- sub("^VERSION_CODENAME=", "",
+                      grep("^VERSION_CODENAME=", info, value = TRUE))
+            if (length(cn) == 0 || !nzchar(cn)) "jammy" else cn
+        }, error = function(e) "jammy")
+        ppm <- sprintf("https://packagemanager.posit.co/cran/__linux__/%s/latest",
+                       codename)
+        options(repos = c(PPM = ppm, CRAN = "https://cloud.r-project.org"))
+        options(HTTPUserAgent = sprintf("R/%s R (%s)", getRversion(),
+                paste(getRversion(), R.version["platform"],
+                      R.version["arch"], R.version["os"])))
+    } else {
+        options(repos = c(CRAN = "https://cloud.r-project.org"))
+    }
+    options(timeout = 300)
+}
+
+.ezmap_auto_install <- function() {
+    missing_core  <- .ezmap_missing(.ezmap_core_packages)
+    missing_extra <- .ezmap_missing(.ezmap_extra_packages)
+    missing_bioc  <- .ezmap_missing(.ezmap_bioc_packages)
+    all_missing   <- unique(c(missing_core, missing_extra, missing_bioc))
+    if (length(all_missing) == 0) return(invisible(TRUE))
+
+    cat("\n",
+        "============================================================\n",
+        "EzMAP v2: First-launch package install\n",
+        "============================================================\n",
+        sep = "")
+    cat("Missing packages detected (", length(all_missing), " total):\n",
+        paste(strwrap(paste(all_missing, collapse = ", "), width = 70,
+                      indent = 2, exdent = 2), collapse = "\n"),
+        "\n\n", sep = "")
+    cat("Installing now -- first run can take 5-30 minutes depending on\n",
+        "your CPU + network. Subsequent launches will be instant.\n\n", sep = "")
+
+    .ezmap_setup_repos()
+
+    # CRAN packages first (everything except Bioconductor-only)
+    cran_missing <- setdiff(c(missing_core, missing_extra), missing_bioc)
+    cran_missing <- setdiff(cran_missing, c("phyloseq", "DESeq2", "biomformat",
+                                            "ANCOMBC", "microbiome"))
+    if (length(cran_missing) > 0) {
+        cat("[1/2] Installing", length(cran_missing), "CRAN packages...\n")
+        tryCatch(
+            install.packages(cran_missing, dependencies = TRUE),
+            error = function(e) {
+                cat("CRAN install failed:", conditionMessage(e), "\n")
+                cat("You may need system libraries -- on Ubuntu try:\n")
+                cat("  sudo apt install libcurl4-openssl-dev libssl-dev ",
+                    "libxml2-dev libfontconfig1-dev libharfbuzz-dev ",
+                    "libfribidi-dev libfreetype6-dev\n", sep = "")
+            }
+        )
+    }
+
+    # Bioconductor packages via BiocManager
+    if (length(missing_bioc) > 0) {
+        if (!requireNamespace("BiocManager", quietly = TRUE)) {
+            cat("Installing BiocManager...\n")
+            install.packages("BiocManager")
+        }
+        cat("[2/2] Installing", length(missing_bioc), "Bioconductor packages",
+            "(this is the longest step)...\n")
+        tryCatch(
+            BiocManager::install(missing_bioc, ask = FALSE, update = FALSE),
+            error = function(e) {
+                cat("Bioconductor install failed:", conditionMessage(e), "\n")
+            }
+        )
+    }
+
+    # Final verification
+    still_missing <- .ezmap_missing(c(.ezmap_core_packages,
+                                      .ezmap_extra_packages,
+                                      .ezmap_bioc_packages))
+    if (length(still_missing) > 0) {
+        cat("\n[WARN] These packages still failed to install:\n  ",
+            paste(still_missing, collapse = ", "), "\n", sep = "")
+        cat("Run this to retry manually:\n")
+        cat("  Rscript scripts/install_r_packages.R\n")
+    } else {
+        cat("\n[OK] All EzMAP v2 R packages are now installed.\n")
+    }
+    cat("============================================================\n\n")
+    invisible(length(still_missing) == 0)
+}
+
+# Trigger auto-install ONLY if at least one core package is missing.
+# Normal launches with everything installed skip this entirely.
+if (length(.ezmap_missing(.ezmap_core_packages)) > 0) {
+    .ezmap_auto_install()
+}
+
+# ============================================================================
 # Package Loading --core packages crash on failure, optional degrade gracefully
 # ============================================================================
 

@@ -70,6 +70,45 @@ dataUploadServer <- function(id) {
           metadata_df <- safe_import_metadata(meta_path)
           cleaned_qsd <- sample_data(metadata_df)
 
+          # Pre-flight check: BIOM sample IDs vs metadata sample IDs.
+          # If they don't overlap, merge_phyloseq() throws an obscure
+          # "invalid class 'phyloseq' object: Component sample names do
+          # not match" error -- give the user a clearer, actionable
+          # message instead.
+          biom_ids <- sample_names(mp0)
+          meta_ids <- rownames(metadata_df)
+          common_ids <- intersect(biom_ids, meta_ids)
+          if (length(common_ids) == 0) {
+              showNotification(ui = tagList(
+                  tags$b("Sample IDs in BIOM and metadata don't match."),
+                  tags$br(),
+                  "BIOM has ", length(biom_ids), " samples (e.g. ",
+                  tags$code(paste(head(biom_ids, 3), collapse = ", ")), "); ",
+                  "metadata has ", length(meta_ids), " (e.g. ",
+                  tags$code(paste(head(meta_ids, 3), collapse = ", ")), "). ",
+                  tags$br(), tags$br(),
+                  "Fix: ensure the first column of your metadata TSV ",
+                  "(sample-id) contains exactly the same IDs as the BIOM ",
+                  "table column headers. Watch for hidden whitespace, ",
+                  "trailing newlines, or BOM characters."
+              ), type = "error", duration = NULL)
+              stop("Sample IDs in BIOM and metadata don't match. ",
+                   "BIOM has ", length(biom_ids), " samples, metadata has ",
+                   length(meta_ids), ", overlap = 0. Check the first column ",
+                   "of your metadata file.", call. = FALSE)
+          }
+          if (length(common_ids) < length(biom_ids) ||
+              length(common_ids) < length(meta_ids)) {
+              showNotification(ui = tagList(
+                  tags$b("Partial sample-ID overlap."),
+                  tags$br(),
+                  "BIOM has ", length(biom_ids), " samples, metadata has ",
+                  length(meta_ids), ", overlap = ", length(common_ids), ". ",
+                  "Continuing with the ", length(common_ids), " matched samples. ",
+                  "Samples missing from one side will be dropped."
+              ), type = "warning", duration = 12)
+          }
+
           incProgress(0.2, detail = "Merging counts and metadata...")
           mp1 <- merge_phyloseq(mp0, cleaned_qsd)
 
