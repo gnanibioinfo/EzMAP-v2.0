@@ -79,7 +79,7 @@ EzMAP2 can be installed in **any directory** on your system. There is no restric
 
 The installation has two phases:
 
-1. **Prerequisites** (manual): install the **Java runtime** (provided in the source package) and **R**. These are the only tools you need to install yourself.
+1. **Prerequisites** (manual): install the **Java runtime** (JRE 11 or newer; provided in the source package) and  **R** (≥ 4.2). These are the only tools you need to install yourself.
 2. **Pipeline setup** (automated, from inside the GUI): once EzMAP2 is launched, click **"Set up"** in the GUI. This will automatically install Miniconda, the pinned `EzMAP2-qiime2` conda environment (QIIME2 2024.10), and the required R/Shiny/Bioconductor packages.
 
 ### Quick Start
