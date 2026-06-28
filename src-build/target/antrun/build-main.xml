@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project name="maven-antrun-" default="main">
-  <target name="main">
-    <copy file="D:\EzMAP_Developoing\EzMAP2\EzMAPv2_testing\src-build\target/EzMAP2.jar" todir="D:\EzMAP_Developoing\EzMAP2\EzMAPv2_testing\src-build/.." overwrite="true" />
-    <echo message="Copied EzMAP2.jar → D:\EzMAP_Developoing\EzMAP2\EzMAPv2_testing\src-build/.." />
-  </target>
-</project>
