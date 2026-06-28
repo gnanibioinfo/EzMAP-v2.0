@@ -1,11 +1,11 @@
-# EzMAP2 — Easy Microbiome Analysis Pipeline v2
+# EzMAP v2.0 — Easy Microbiome Analysis Pipeline v2.0
 
 [![Java 11+](https://img.shields.io/badge/Java-11%2B-blue)](https://adoptium.net/)
 [![QIIME2 2024.10](https://img.shields.io/badge/QIIME2-2024.10-green)](https://qiime2.org/)
 [![R Shiny](https://img.shields.io/badge/R-Shiny-orange)](https://shiny.posit.co/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-**EzMAP2** is a cross-platform GUI application for 16S/ITS amplicon microbiome analysis. It wraps the QIIME2 pipeline in a step-by-step Java Swing wizard and provides an interactive R Shiny module for downstream statistical analysis and visualization.
+**EzMAP v2.0** is a cross-platform GUI application for 16S/ITS amplicon microbiome analysis. It wraps the QIIME2 pipeline in a step-by-step Java Swing wizard and provides an interactive R Shiny module for downstream statistical analysis and visualization.
 
 EzMAP2 supports **Easy Mode** (one-click pipeline with validated defaults) and **Expert Mode** (full parameter control at every step), making it accessible to both beginners and advanced users.
 
@@ -75,16 +75,16 @@ EzMAP2 supports **Easy Mode** (one-click pipeline with validated defaults) and *
 
 ## Installation
 
-EzMAP2 can be installed in **any directory** on your system. There is no restriction to a specific location.
+EzMAP v2.0 can be installed in **any directory** on your system. There is no restriction to a specific location.
 
 The installation has two phases:
 
 1. **Prerequisites** (manual): install the **Java runtime** (provided in the source package) and **R**. These are the only tools you need to install yourself.
-2. **Pipeline setup** (automated, from inside the GUI): once EzMAP2 is launched, click **"Set up"** in the GUI. This will automatically install Miniconda, the pinned `EzMAP2-qiime2` conda environment (QIIME2 2024.10), and the required R/Shiny/Bioconductor packages.
+2. **Pipeline setup** (automated, from inside the GUI): once EzMAP v2.0 is launched, click **"Set up"** in the GUI. This will automatically install Miniconda, the pinned `EzMAP2-qiime2` conda environment (QIIME2 2024.10), and the required R/Shiny/Bioconductor packages.
 
 ### Quick Start
 
-After downloading and extracting the EzMAP2 package:
+After downloading and extracting the EzMAP v2.0 package:
 
 **Step 1 — Install prerequisites (all platforms):**
 - Install the Java runtime included in the `java/` folder of the source package, or download it from [Adoptium (Java 11+)](https://adoptium.net/).
@@ -111,7 +111,7 @@ This step only needs to be done once. On subsequent launches, EzMAP2 will detect
 
 ### Prerequisites — Detailed Instructions
 
-EzMAP2 requires **Java** and **R** to be installed on the host system before launching. Conda, QIIME2, and the R/Bioconductor packages are handled automatically by the GUI's "Set up" step — you do not install those manually.
+EzMAP v2.0 requires **Java** and **R** to be installed on the host system before launching. Conda, QIIME2, and the R/Bioconductor packages are handled automatically by the GUI's "Set up" step — you do not install those manually.
 
 #### 1. Install the Java Runtime
 
@@ -161,7 +161,7 @@ brew install r
 
 **Windows:** install [R for Windows](https://cran.r-project.org/bin/windows/base/).
 
-#### 3. Build EzMAP2 (Linux / macOS only)
+#### 3. Build EzMAP v2.0 (Linux / macOS only)
 
 On Linux and macOS, build the JAR once before first launch:
 
@@ -193,7 +193,7 @@ Once the GUI opens, click **"Set up"** — EzMAP2 will install Miniconda, the `E
 
 ### Windows Installation
 
-EzMAP2 on Windows uses **WSL (Windows Subsystem for Linux)** for QIIME2 upstream analysis. The Java GUI runs natively on Windows.
+EzMAP v2.0 on Windows uses **WSL (Windows Subsystem for Linux)** for QIIME2 upstream analysis. The Java GUI runs natively on Windows.
 
 1. **Install Java 11+** from [Adoptium](https://adoptium.net/) and add to PATH (or use the runtime bundled in the `java/` folder of the source package).
 2. **Install [R for Windows](https://cran.r-project.org/bin/windows/base/)**.
@@ -201,7 +201,7 @@ EzMAP2 on Windows uses **WSL (Windows Subsystem for Linux)** for QIIME2 upstream
    ```powershell
    wsl --install -d Ubuntu
    ```
-4. **Launch EzMAP2** by double-clicking `EzMAP2.jar` in the extracted folder.
+4. **Launch EzMAP v2.0** by double-clicking `EzMAP2.jar` in the extracted folder.
    - Alternatively, double-click `ezmap2.bat`, or run `java -Xmx2g -jar EzMAP2.jar` from a command prompt.
 5. **Click "Set up" in the GUI** — EzMAP2 will install Miniconda and the pinned `EzMAP2-qiime2` environment inside WSL, plus the required R packages, automatically.
 
@@ -231,7 +231,7 @@ The build produces `EzMAP2.jar` in the project root — a self-contained JAR tha
 
 ---
 
-## Running EzMAP2
+## Running EzMAP v2.0
 
 **Linux / macOS:**
 ```bash
@@ -281,7 +281,7 @@ Analyze pre-existing data (BIOM table + metadata) without running QIIME2:
 
 ### Resume Downstream
 
-Re-open a previous EzMAP2 pipeline output for further analysis:
+Re-open a previous EzMAP v2.0 pipeline output for further analysis:
 
 1. **Welcome** → Select "Full Analysis"
 2. Navigate to **Mode Selection** → Click "Resume Downstream"
@@ -291,7 +291,7 @@ Re-open a previous EzMAP2 pipeline output for further analysis:
 
 ## Pipeline Output
 
-When EzMAP2 runs the full upstream pipeline, it creates the following output structure in your chosen output directory:
+When EzMAP v2.0 runs the full upstream pipeline, it creates the following output structure in your chosen output directory:
 
 ```
 <your-output-dir>/
@@ -321,7 +321,7 @@ When EzMAP2 runs the full upstream pipeline, it creates the following output str
     └── pipeline.log            # Full pipeline log
 ```
 
-The `bundle/` directory contains all files needed for downstream analysis. When you click "Open in EzMAP2 Downstream" or select this folder in Downstream Only mode, EzMAP2 auto-detects these files.
+The `bundle/` directory contains all files needed for downstream analysis. When you click "Open in EzMAP2 Downstream" or select this folder in Downstream Only mode, EzMAP v2.0 auto-detects these files.
 
 ---
 
@@ -387,4 +387,4 @@ Tax4Fun2 functional prediction requires ~3.5 GB of reference data not included i
 
 ## License
 
-EzMAP2 is distributed under the GNU General Public License v3.0. See [LICENSE](LICENSE) for details.
+EzMAP v2.0 is distributed under the GNU General Public License v3.0. See [LICENSE](LICENSE) for details.
