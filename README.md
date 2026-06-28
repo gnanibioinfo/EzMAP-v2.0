@@ -1,4 +1,4 @@
-# EzMAP v2.0 — Easy Microbiome Analysis Pipeline v2.0
+# EzMAP v2.0 — Easy Microbiome Analysis Pipeline
 
 [![Java 11+](https://img.shields.io/badge/Java-11%2B-blue)](https://adoptium.net/)
 [![QIIME2 2024.10](https://img.shields.io/badge/QIIME2-2024.10-green)](https://qiime2.org/)
