@@ -7,7 +7,7 @@
 
 **EzMAP v2.0** is a cross-platform GUI application for 16S/ITS amplicon microbiome analysis. It wraps the QIIME2 pipeline in a step-by-step Java Swing wizard and provides an interactive R Shiny module for downstream statistical analysis and visualization.
 
-EzMAP2 supports **Easy Mode** (one-click pipeline with validated defaults) and **Expert Mode** (full parameter control at every step), making it accessible to both beginners and advanced users.
+EzMAP v2.0 supports **Easy Mode** (one-click pipeline with validated defaults) and **Expert Mode** (full parameter control at every step), making it accessible to both beginners and advanced users.
 
 ---
 
