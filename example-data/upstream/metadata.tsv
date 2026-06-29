@@ -1,0 +1,8 @@
+sample-id	Sample	site	condition	time	replicate
+#q2:types	categorical	categorical	categorical	categorical	categorical
+CRR1325537	R-G-1-1	RH	Control	T1	Rep-1
+CRR1325541	R-G-1-2	RH	Control	T1	Rep-2
+CRR1325545	R-G-1-3	RH	Control	T1	Rep-3
+CRR1325615	R-Y-1-1	RH	Drought	T1	Rep-1
+CRR1325619	R-Y-1-2	RH	Drought	T1	Rep-2
+CRR1325623	R-Y-1-3	RH	Drought	T1	Rep-3
