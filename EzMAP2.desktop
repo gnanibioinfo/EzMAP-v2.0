@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=EzMAP v2.0
+Comment=Easy Microbiome Analysis Pipeline
+Exec=bash -c 'cd "$(dirname "%k")" && ./ezmap2.sh'
+Icon=utilities-terminal
+Terminal=false
+Categories=Science;Education;Biology;
+StartupWMClass=EzMAP2
+StartupNotify=true
