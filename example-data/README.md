@@ -84,25 +84,32 @@ On these 6 small samples the whole run takes only a few minutes.
 | Panel | Expected result on this dataset |
 |-------|---------------------------------|
 | **Data** | Phyloseq object built; metadata shows `condition` / `time` / `replicate` for 6 samples |
-| **Filtering** | Chloroplast/mitochondria and low-prevalence ASVs removed; most ASVs retained |
+| **Filtering** | Chloroplast/mitochondria and low-prevalence ASVs removed; 124 ASVs retained |
 | **Relative Abundance** | Stacked bar plots by Phylum/Genus, Control vs Drought |
 | **Rarefaction** | Rarefaction curves per sample/group |
 | **Alpha Diversity** | Shannon / Chao1 / Simpson boxplots compared between groups |
 | **Beta Diversity** | PCoA ordination + PERMANOVA, Control vs Drought (colour by `condition`) |
-| **LEfSe** | LDA effect-size differential-abundance ranking |
-| **DESeq2** | Per-ASV differential abundance with volcano plot |
-| **ANCOM-BC** | Compositional (bias-corrected) differential abundance |
-| **Random Forest** | Control-vs-Drought classifier with feature-importance ranking |
-| **DESeq2 + RF / ANCOM-BC + RF** | Intersection of statistical and machine-learning biomarkers |
+| **LEfSe** | Runs; no significant features on this small subset (expected at n = 3/group) |
+| **DESeq2** | Volcano plot; at ASV level, 1 significant ASV — Massilia (ASV51), enriched in Drought (padj < 0.05). At genus level, none reach significance |
+| **ANCOM-BC** | Compositional (bias-corrected) test; more conservative — 0 significant features on this subset |
+| **Random Forest** | Control-vs-Drought classifier with feature-importance ranking (top ASVs) |
+| **DESeq2 + RF ** | Biomarker intersection: 1 overlapping ASV — Massilia (ASV51) is both DESeq2-significant and a top Random-Forest predictor (a concordant biomarker) |
+| **ANCOM-BC + RF **  |Intersection of ANCOM-BC and Random-Forest features (none, since ANCOM-BC reports no significant taxa here)|
 | **Network** | Co-occurrence network built per group |
-| **Tax4Fun** | KEGG functional (KO/pathway) prediction — works, using the real SILVA taxonomy |
+| **Tax4Fun** | KEGG functional (KO/pathway) prediction — heatmap produced |
 | **BugBase** | Phenotype prediction (Gram stain, oxygen tolerance, etc.) |
 | **FunGuild** | Not applicable here — FunGuild is for fungal ITS data; this is a 16S bacterial dataset |
 
 > This is a compact 3-replicates-per-group demonstration subset, designed to let
-> you exercise the entire EzMAP2 workflow quickly. Every panel runs and produces
-> output. For a fully powered statistical analysis, use a larger dataset (for
-> example, the complete study).
+> you exercise the entire EzMAP2 workflow quickly. Every panel runs and produces valid
+> output. Because differential-abundance tests apply FDR correction and are underpowered
+> at three replicates per group, results are method-dependent: DESeq2 (ASV level) identifies 
+> Massilia (ASV51) as enriched under Drought, and this same ASV is recovered as a top 
+> Random-Forest predictor in the DESeq2 + Random Forest overlap panel, whereas the more 
+> conservative ANCOM-BC and LEfSe report no significant features. This is expected for 
+> a dataset of this size — use a larger, fully replicated dataset for a powered biological analysis.
+
+---
 
 ---
 
