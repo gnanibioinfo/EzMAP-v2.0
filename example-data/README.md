@@ -93,8 +93,8 @@ On these 6 small samples the whole run takes only a few minutes.
 | **DESeq2** | Volcano plot; at ASV level, 1 significant ASV — Massilia (ASV51), enriched in Drought (padj < 0.05). At genus level, none reach significance |
 | **ANCOM-BC** | Compositional (bias-corrected) test; more conservative — 0 significant features on this subset |
 | **Random Forest** | Control-vs-Drought classifier with feature-importance ranking (top ASVs) |
-| **DESeq2 + RF ** | Biomarker intersection: 1 overlapping ASV — Massilia (ASV51) is both DESeq2-significant and a top Random-Forest predictor (a concordant biomarker) |
-| **ANCOM-BC + RF **  |Intersection of ANCOM-BC and Random-Forest features (none, since ANCOM-BC reports no significant taxa here)|
+| **DESeq2 + RF** | Biomarker intersection: 1 overlapping ASV — Massilia (ASV51) is both DESeq2-significant and a top Random-Forest predictor (a concordant biomarker) |
+| **ANCOM-BC + RF**  |Intersection of ANCOM-BC and Random-Forest features (none, since ANCOM-BC reports no significant taxa here)|
 | **Network** | Co-occurrence network built per group |
 | **Tax4Fun** | KEGG functional (KO/pathway) prediction — heatmap produced |
 | **BugBase** | Phenotype prediction (Gram stain, oxygen tolerance, etc.) |
